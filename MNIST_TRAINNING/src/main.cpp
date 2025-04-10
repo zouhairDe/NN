@@ -29,18 +29,17 @@ int main() {
     std::vector<float> images = load_mnist_images("data/train-images-idx3-ubyte.gz", num_images, rows, cols);
     std::vector<int> labels = load_mnist_labels("data/train-labels-idx1-ubyte.gz", num_labels);
 
-    // Allocate device memory
+    // Allocate device memory, this uses Nvedia GPU memory so keep an eye on your other sotwares usage
     float* d_input = static_cast<float*>(cuda_malloc(batch_size * input_size * sizeof(float)));
     float* d_hidden = static_cast<float*>(cuda_malloc(hidden_size * sizeof(float)));
     float* d_output = static_cast<float*>(cuda_malloc(num_classes * sizeof(float)));
 
-    // Initialize weights and biases
+    // Initialize weights and biases mem
     float* fc1_weights = static_cast<float*>(cuda_malloc(input_size * hidden_size * sizeof(float)));
     float* fc1_bias = static_cast<float*>(cuda_malloc(hidden_size * sizeof(float)));
     float* fc2_weights = static_cast<float*>(cuda_malloc(hidden_size * num_classes * sizeof(float)));
     float* fc2_bias = static_cast<float*>(cuda_malloc(num_classes * sizeof(float)));
 
-    // Temporary host buffers for initialization
     std::vector<float> h_fc1_weights(input_size * hidden_size);
     std::vector<float> h_fc1_bias(hidden_size);
     std::vector<float> h_fc2_weights(hidden_size * num_classes);
@@ -109,7 +108,7 @@ int main() {
         printf("Model saved to mnist_model.bin\n");
     }
 
-    // Cleanup
+    // Cleanup mem
     cuda_free(d_input);
     cuda_free(d_hidden);
     cuda_free(d_output);
